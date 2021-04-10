@@ -201,6 +201,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-!/dist/
-!/.idea/
+dist/
+.idea/
 .idea/vcs.xml

@@ -16,11 +16,13 @@
     "watch": "npx tsc -w",
     "patch": "npm version patch",
     "minor": "npm version minor",
-    "major": "npm version release"
+    "major": "npm version release",
+    "test": "mocha"
   },
   "author": "Aleksey Komov",
   "license": "MIT",
   "devDependencies": {
+    "mocha": "^8.3.2",
     "typescript": "^4.2.4"
   }
 }

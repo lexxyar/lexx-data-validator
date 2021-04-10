@@ -10,7 +10,7 @@ export interface DataValidatorRuleSchemaMap {
 
 export class DataValidatorRule {
   private _email = false
-  private _string = false
+  private _alpha = false
   private _number = false
   private _required = false
   private _min: number | null = null
@@ -25,7 +25,7 @@ export class DataValidatorRule {
   }
 
   max(nValue: number): DataValidatorRule {
-    this._min = nValue
+    this._max = nValue
     return this
   }
 
@@ -34,8 +34,17 @@ export class DataValidatorRule {
     return this
   }
 
+  /**
+   * @deprecated sins 0.1.2
+   * string() method was changed to alpha() method
+   */
   public string(): DataValidatorRule {
-    this._string = true
+    this._alpha = true
+    return this
+  }
+
+  public alpha(): DataValidatorRule {
+    this._alpha = true
     return this
   }
 
@@ -62,8 +71,8 @@ export class DataValidatorRule {
     return this._is(sValue, ValidationRegexp.email)
   }
 
-  private _isString(sValue: any): boolean {
-    return this._is(sValue, ValidationRegexp.alfa, `${sValue} is not a string`)
+  private _isAlpha(sValue: any): boolean {
+    return this._is(sValue, ValidationRegexp.alfa, `${sValue} is not alphas only`)
   }
 
   private _isNumber(sValue: any): boolean {
@@ -91,7 +100,7 @@ export class DataValidatorRule {
   private _isMax(nValue: any): boolean {
     const nVal = Number(nValue)
     // @ts-ignore
-    if (nVal > this._min) {
+    if (nVal > this._max) {
       throw new Error(`${nVal} should be lower than or equal to ${this._max}`)
     }
     // @ts-ignore
@@ -116,8 +125,8 @@ export class DataValidatorRule {
         this._isMax(mValue);
       }
 
-      if (this._string) {
-        this._isString(mValue);
+      if (this._alpha) {
+        this._isAlpha(mValue);
       }
 
       if (this._number) {
@@ -171,6 +180,6 @@ export class DataValidator {
         bGlobalRes = bGlobalRes && mRes === true
       }
     })
-    return true
+    return bGlobalRes
   }
 }

@@ -37,3 +37,11 @@ Result is:
   'gender is required'
 ]
 ```
+
+# Features
+
+# Change log
+Version|Changes
+---|---
+0.1.2|**string** is deprecated. Use **alpha** method instead
+0.1.1|min, max, email, string, number, required
