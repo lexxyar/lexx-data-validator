@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DataValidator = exports.ValidationRule = exports.DataValidatorRule = void 0;
-// export namespace LexxSoft {
 class ValidationRegexp {
 }
 ValidationRegexp.alfa = /^[A-Za-z]+$/;
@@ -153,22 +152,3 @@ class DataValidator {
     }
 }
 exports.DataValidator = DataValidator;
-// }
-// import {DataValidator, DataValidatorRuleSchemaMap, ValidationRule} from "./DataValidator";
-//
-// const schema: DataValidatorRuleSchemaMap = {
-//   email: ValidationRule().email(),
-//   gender: ValidationRule('gender').required(),
-//   age: ValidationRule('Age').string().min(12)
-// }
-//
-// const data = {
-//   name: 'John Doe',
-//   age: 10,
-//   email: 'jdoe@mail.@.com',
-//   gender: ''
-// }
-//
-// const oValidator = new DataValidator()
-// oValidator.schema(schema).validate(data);
-// console.log(oValidator.getErrors())

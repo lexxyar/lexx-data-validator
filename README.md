@@ -8,17 +8,7 @@ npm i lexx-data-validator
 
 # Usage
 ```ts
-import {LexxSoft} from "lexx-data-validator";
-import DataValidatorRuleSchemaMap = LexxSoft.DataValidatorRuleSchemaMap;
-import DataValidator = LexxSoft.DataValidator;
-import ValidationRule = LexxSoft.ValidationRule;
-
-
-const schema: DataValidatorRuleSchemaMap = {
-  email: ValidationRule().email(),
-  gender: ValidationRule('gender').required(),
-  age: ValidationRule('Age').string().min(12)
-}
+import {DataValidator, DataValidatorRuleSchemaMap, ValidationRule} from "lexx-data-validator";
 
 const data = {
   name: 'John Doe',
@@ -27,7 +17,23 @@ const data = {
   gender: ''
 }
 
+const schema: DataValidatorRuleSchemaMap = {
+  email: ValidationRule().email(),
+  gender: ValidationRule('gender').required(),
+  age: ValidationRule('Age').string().min(12)
+}
+
 const oValidator = new DataValidator()
 oValidator.schema(schema).validate(data);
 console.log(oValidator.getErrors())
+```
+
+Result is:
+
+```js
+[
+  '10 should be greater than or equal to 12',
+  'jdoe@mail.@.com is not valid',
+  'gender is required'
+]
 ```
