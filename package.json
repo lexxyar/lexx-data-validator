@@ -1,9 +1,12 @@
 {
   "name": "lexx-data-validator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "main": "dist/index.js",
-  "keywords": ["data", "validation"],
+  "keywords": [
+    "data",
+    "validation"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lexxyar/lexx-data-validator.git"
