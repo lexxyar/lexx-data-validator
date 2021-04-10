@@ -19,6 +19,10 @@ export class DataValidatorRule {
   constructor(private _fieldName = '') {
   }
 
+  markAsRequired(): boolean {
+    return this._required
+  }
+
   min(nValue: number): DataValidatorRule {
     this._min = nValue
     return this
@@ -107,7 +111,7 @@ export class DataValidatorRule {
     return nVal > this._max
   }
 
-  public validate(mValue: any): boolean|string {
+  public validate(mValue: any): boolean | string {
     try {
       if (this._email) {
         this._isEmail(mValue);
@@ -166,6 +170,7 @@ export class DataValidator {
     let bGlobalRes = true
     const aKeys = Object.keys(oObject)
     const aSchemaKeys: string[] = Object.keys(this._oSchema)
+    const aUsedRequired: string[] = []
     aKeys.forEach(sKey => {
       const oSchemaItem = aSchemaKeys.find(itm => itm === sKey)
       if (oSchemaItem) {
@@ -177,9 +182,33 @@ export class DataValidator {
           // @ts-ignore
           this._aError.push(mRes)
         }
+        if (oRule.markAsRequired()) {
+          aUsedRequired.push(sKey)
+        }
         bGlobalRes = bGlobalRes && mRes === true
       }
     })
+
+    // Required check existing
+    const aSchemaRequired: string[] = []
+    aSchemaKeys.forEach(sKey => {
+      const oRule: DataValidatorRule = this._oSchema?.[sKey] as DataValidatorRule
+      if (oRule.markAsRequired() && !aUsedRequired.includes(sKey)) {
+        aSchemaRequired.push(sKey)
+      }
+    })
+
+    // let intersection = aSchemaRequired.filter(x => aKeys.includes(x));
+    let difference = aSchemaRequired.filter(x => !aKeys.includes(x));
+
+    // console.log(aKeys, aSchemaRequired, intersection, difference)
+
+    difference.forEach(item => {
+      // @ts-ignore
+      this._aError.push(`${item} is required`)
+      bGlobalRes = false
+    })
+
     return bGlobalRes
   }
 }

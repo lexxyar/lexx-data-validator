@@ -1,4 +1,9 @@
 # lexx-data-validator
+
+![GitHub package.json version](https://img.shields.io/github/package-json/v/lexxyar/lexx-data-validator)
+![GitHub](https://img.shields.io/github/license/lexxyar/lexx-data-validator)
+![GitHub all releases](https://img.shields.io/github/downloads/lexxyar/lexx-data-validator/total)
+
 This is simple data validator
 
 # Installation
@@ -20,7 +25,7 @@ const data = {
 const schema: DataValidatorRuleSchemaMap = {
   email: ValidationRule().email(),
   gender: ValidationRule('gender').required(),
-  age: ValidationRule('Age').string().min(12)
+  age: ValidationRule('Age').min(12)
 }
 
 const oValidator = new DataValidator()
@@ -43,5 +48,6 @@ Result is:
 # Change log
 Version|Changes
 ---|---
+0.1.3|If field is required and it not pass with data object - it is an error
 0.1.2|**string** is deprecated. Use **alpha** method instead
 0.1.1|min, max, email, string, number, required

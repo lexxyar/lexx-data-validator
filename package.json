@@ -17,7 +17,8 @@
     "patch": "npm version patch",
     "minor": "npm version minor",
     "major": "npm version release",
-    "test": "mocha"
+    "test": "npm run build && mocha",
+    "mocha": "mocha"
   },
   "author": "Aleksey Komov",
   "license": "MIT",
