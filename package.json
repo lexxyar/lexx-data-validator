@@ -1,0 +1,23 @@
+{
+  "name": "lexx-data-validator",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "keywords": ["data", "validation"],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lexxyar/lexx-data-validator.git"
+  },
+  "scripts": {
+    "build": "npx tsc",
+    "watch": "npx tsc -w",
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version release"
+  },
+  "author": "Aleksey Komov",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
