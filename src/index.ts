@@ -193,7 +193,7 @@ export class DataValidator {
     const aSchemaRequired: string[] = []
     aSchemaKeys.forEach(sKey => {
       const oRule: DataValidatorRule = this._oSchema?.[sKey] as DataValidatorRule
-      if (oRule.markAsRequired() && !aUsedRequired.includes(sKey)) {
+      if (oRule.markAsRequired() && !(aUsedRequired as Array<string>).includes(sKey)) {
         aSchemaRequired.push(sKey)
       }
     })
