@@ -1,4 +1,5 @@
 class ValidationRegexp {
+  static required = /^\S+.*$/
   static alfa = /^[A-Za-z]+$/
   static number = /^[0-9]+$/
   static email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
@@ -8,6 +9,14 @@ export interface DataValidatorRuleSchemaMap {
   [key: string]: DataValidatorRule
 }
 
+interface DataValidatorMessageMap {
+  [key: number]: string
+}
+
+enum Operators {
+  none, min, max, required, email, alpha, number
+}
+
 export class DataValidatorRule {
   private _email = false
   private _alpha = false
@@ -15,103 +24,64 @@ export class DataValidatorRule {
   private _required = false
   private _min: number | null = null
   private _max: number | null = null
+  private _message: Map<number, string> = new Map<number, string>()
 
-  constructor(private _fieldName = '') {
+  /**
+   *
+   * @deprecated @param _fieldName is deprecated since v 0.2.0
+   */
+  constructor() {
   }
 
   markAsRequired(): boolean {
     return this._required
   }
 
-  min(nValue: number): DataValidatorRule {
+  min(nValue: number, sErrorMessage: string = ''): this {
     this._min = nValue
+    this._message.set(Operators.min, sErrorMessage)
     return this
   }
 
-  max(nValue: number): DataValidatorRule {
+  max(nValue: number, sErrorMessage: string = ''): this {
     this._max = nValue
+    this._message.set(Operators.max, sErrorMessage)
     return this
   }
 
-  public email(): DataValidatorRule {
+  email(sErrorMessage: string = ''): this {
     this._email = true
+    this._message.set(Operators.email, sErrorMessage)
     return this
   }
 
   /**
    * @deprecated sins 0.1.2
-   * string() method was changed to alpha() method
+   * string() method was deprecated. Use alpha() method instead
    */
-  public string(): DataValidatorRule {
+  string(): this {
+    return this.alpha()
+  }
+
+  alpha(sErrorMessage: string = ''): this {
     this._alpha = true
+    this._message.set(Operators.alpha, sErrorMessage)
     return this
   }
 
-  public alpha(): DataValidatorRule {
-    this._alpha = true
-    return this
-  }
-
-  public number(): DataValidatorRule {
+  number(sErrorMessage: string = ''): this {
     this._number = true
+    this._message.set(Operators.number, sErrorMessage)
     return this
   }
 
-  public required(): DataValidatorRule {
+  required(sErrorMessage: string = ''): this {
     this._required = true
+    this._message.set(Operators.required, sErrorMessage)
     return this
   }
 
-  private _is(sValue: any, regExp: RegExp, sErrText: string = ''): boolean {
-    const oRegexp: RegExp = new RegExp(regExp);
-    const bRes = oRegexp.test(sValue);
-    if (!bRes) {
-      throw new Error(sErrText ? sErrText : `${sValue} is not valid`)
-    }
-    return bRes
-  }
-
-  private _isEmail(sValue: any): boolean {
-    return this._is(sValue, ValidationRegexp.email)
-  }
-
-  private _isAlpha(sValue: any): boolean {
-    return this._is(sValue, ValidationRegexp.alfa, `${sValue} is not alphas only`)
-  }
-
-  private _isNumber(sValue: any): boolean {
-    return this._is(sValue, ValidationRegexp.number, `${sValue} is not a number`)
-  }
-
-  private _isRequired(sValue: any): boolean {
-    const sVal = sValue.toString().trim()
-    if (!sVal) {
-      throw new Error(`${this._fieldName} is required`)
-    }
-    return !!sVal
-  }
-
-  private _isMin(nValue: any): boolean {
-    const nVal = Number(nValue)
-    // @ts-ignore
-    if (nVal < this._min) {
-      throw new Error(`${nVal} should be greater than or equal to ${this._min}`)
-    }
-    // @ts-ignore
-    return nVal < this._min
-  }
-
-  private _isMax(nValue: any): boolean {
-    const nVal = Number(nValue)
-    // @ts-ignore
-    if (nVal > this._max) {
-      throw new Error(`${nVal} should be lower than or equal to ${this._max}`)
-    }
-    // @ts-ignore
-    return nVal > this._max
-  }
-
-  public validate(mValue: any): boolean | string {
+  validate(mValue: any): boolean | string {
     try {
       if (this._email) {
         this._isEmail(mValue);
@@ -136,18 +106,68 @@ export class DataValidatorRule {
       if (this._number) {
         this._isNumber(mValue);
       }
-    }
-      // @ts-ignore
-    catch (e: Error) {
+    } catch (e: any) {
       return e.message
     }
 
     return true
   }
+
+  private _is(sValue: any, regExp: RegExp, operator: Operators = Operators.none): boolean {
+    const oRegexp: RegExp = new RegExp(regExp);
+    const bRes = oRegexp.test(sValue);
+    if (!bRes) {
+      const sErrText = this._message.get(operator)
+      throw new Error(sErrText ? sErrText : `${sValue} is not valid`)
+    }
+    return bRes
+  }
+
+  private _isEmail(sValue: any): boolean {
+    return this._is(sValue, ValidationRegexp.email, Operators.email)
+  }
+
+  private _isAlpha(sValue: any): boolean {
+    return this._is(sValue, ValidationRegexp.alfa, Operators.alpha)
+  }
+
+  private _isNumber(sValue: any): boolean {
+    return this._is(sValue, ValidationRegexp.number, Operators.alpha)
+  }
+
+  private _isRequired(sValue: any): boolean {
+    return this._is(sValue, ValidationRegexp.required, Operators.required)
+  }
+
+  private _isMin(nValue: any): boolean {
+    const nVal = Number(nValue)
+    if (this._min) {
+      if (nVal < this._min) {
+        const sErrText = this._message.get(Operators.min)
+        throw new Error(sErrText ? sErrText : `${nVal} should be greater than or equal to ${this._min}`)
+      }
+      return nVal < this._min
+    } else {
+      return true
+    }
+  }
+
+  private _isMax(nValue: any): boolean {
+    const nVal = Number(nValue)
+    if (this._max) {
+      if (nVal > this._max) {
+        const sErrText = this._message.get(Operators.max)
+        throw new Error(sErrText ? sErrText : `${nVal} should be lower than or equal to ${this._max}`)
+      }
+      return nVal > this._max
+    } else {
+      return true
+    }
+  }
 }
 
-export function ValidationRule(sTitle = ''): DataValidatorRule {
-  return new DataValidatorRule(sTitle)
+export function ValidationRule(): DataValidatorRule {
+  return new DataValidatorRule()
 }
 
 export class DataValidator {
@@ -171,7 +191,7 @@ export class DataValidator {
     const aKeys = Object.keys(oObject)
     const aSchemaKeys: string[] = Object.keys(this._oSchema)
     const aUsedRequired: string[] = []
-    aKeys.forEach(sKey => {
+    aKeys.forEach((sKey: string) => {
       const oSchemaItem = aSchemaKeys.find(itm => itm === sKey)
       if (oSchemaItem) {
         const oRule: DataValidatorRule = this._oSchema?.[oSchemaItem] as DataValidatorRule

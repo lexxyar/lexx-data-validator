@@ -24,8 +24,8 @@ const data = {
 
 const schema: DataValidatorRuleSchemaMap = {
   email: ValidationRule().email(),
-  gender: ValidationRule('gender').required(),
-  age: ValidationRule('Age').min(12)
+  gender: ValidationRule().required(),
+  age: ValidationRule().min(12)
 }
 
 const oValidator = new DataValidator()
@@ -44,10 +44,19 @@ Result is:
 ```
 
 # Features
+Since v 0.2.0 you can add message for errored values like shown below
+```ts
+const schema: DataValidatorRuleSchemaMap = {
+  email: ValidationRule().email('E-mail is invalid'),
+  gender: ValidationRule().required('Gender is required'),
+  age: ValidationRule().min(12, 'Minimum value is 12')
+}
+```
 
 # Change log
 Version|Changes
 ---|---
+0.2.0|Added messages for error
 0.1.3|If field is required and it not pass with data object - it is an error
 0.1.2|**string** is deprecated. Use **alpha** method instead
 0.1.1|min, max, email, string, number, required
