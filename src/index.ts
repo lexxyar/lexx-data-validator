@@ -183,6 +183,10 @@ export class DataValidator {
     return this._aError
   }
 
+  public clearErrors(): void {
+    this._aError = []
+  }
+
   public validate(oObject: Object): boolean {
     if (!this._oSchema) {
       return true
@@ -200,7 +204,7 @@ export class DataValidator {
         let mRes = oRule.validate(oObject[sKey])
         if (mRes !== true) {
           // @ts-ignore
-          this._aError.push(mRes)
+          this._aError.push({key: sKey, message: mRes})
         }
         if (oRule.markAsRequired()) {
           aUsedRequired.push(sKey)
@@ -225,7 +229,7 @@ export class DataValidator {
 
     difference.forEach(item => {
       // @ts-ignore
-      this._aError.push(`${item} is required`)
+      this._aError.push({key: item, message: `${item} is required`})
       bGlobalRes = false
     })
 

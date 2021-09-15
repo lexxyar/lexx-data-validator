@@ -37,9 +37,9 @@ Result is:
 
 ```js
 [
-  '10 should be greater than or equal to 12',
-  'jdoe@mail.@.com is not valid',
-  'gender is required'
+  {key: 'age', message:'10 should be greater than or equal to 12'},
+  {key: 'email', message:'jdoe@mail.@.com is not valid'},
+  {key: 'gender', message: 'gender is required'}
 ]
 ```
 
@@ -56,6 +56,7 @@ const schema: DataValidatorRuleSchemaMap = {
 # Change log
 Version|Changes
 ---|---
+0.3.0|Reorganized error structure
 0.2.0|Added messages for error
 0.1.3|If field is required and it not pass with data object - it is an error
 0.1.2|**string** is deprecated. Use **alpha** method instead
